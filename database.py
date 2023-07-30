@@ -7,7 +7,23 @@ from firebase_admin import firestore
 
 @st.cache_resource
 def getDb():
-    cred = credentials.Certificate("dbmsbloodtra-firebase-adminsdk-l08e9-2fbb65dd07.json")  # noqa
+    # try:
+    #     cred = credentials.Certificate("dbmsbloodtra-firebase-adminsdk-l08e9-2fbb65dd07.json")  # noqa
+    # except FileNotFoundError:
+    firebaseCreds = st.secrets.firebase
+    cred = credentials.Certificate({
+        "type": firebaseCreds["type"],
+        "project_id": firebaseCreds["project_id"],
+        "private_key_id": firebaseCreds["private_key_id"],
+        "private_key": firebaseCreds["private_key"],
+        "client_email": firebaseCreds["client_email"],
+        "client_id": firebaseCreds["client_id"],
+        "auth_uri": firebaseCreds["auth_uri"],
+        "token_uri": firebaseCreds["token_uri"],
+        "auth_provider_x509_cert_url": firebaseCreds["auth_provider_x509_cert_url"],
+        "client_x509_cert_url": firebaseCreds["client_x509_cert_url"],
+        "universe_domain": firebaseCreds["universe_domain"],
+    })
     firebase_admin.initialize_app(cred)
     return firestore.client()
 
