@@ -1,0 +1,3 @@
+extra-streamlit-components==0.1.56
+firebase-admin==6.2.0
+streamlit==1.25.0
