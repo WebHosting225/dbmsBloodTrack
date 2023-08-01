@@ -7,6 +7,10 @@ import database as db
 def requestBlood():
     for_me = st.checkbox("For me", value=True)
     with st.form("requestBlood", clear_on_submit=True):
+        if st.session_state.req:
+            st.success("Request Sent")
+            st.session_state.req = False
+
         col1, col2 = st.columns(2)
         if for_me:
             col1.write("")
@@ -31,6 +35,7 @@ def requestBlood():
             if not phone: col2.error("Phone is required")
 
         if st.form_submit_button("Request Blood"):
+            st.session_state.req = True
             if for_me:
                 db.banks.add({
                     "user": user.reference,
@@ -107,9 +112,10 @@ else:
     st.header("Blood Bank")
     user = session.get().get("user").get()
 
+    if "req" not in st.session_state: st.session_state.req = False
+
     req, don = st.tabs(["Request Blood", "Donate Blood"])
     with req:
         requestBlood()
     with don:
-        pass
         donateBlood()
