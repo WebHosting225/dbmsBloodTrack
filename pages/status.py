@@ -23,15 +23,16 @@ def donations():
 
 def requests():
     requestList = db.banks.where("user", "==", user.reference).get()
-    cols = st.columns((4, 2, 2, 2, 2))
+    cols = st.columns((3, 2, 2, 2, 2, 2))
     cols[0].write("RefId")
     cols[1].write("Quantity")
     cols[2].write("Requirement")
     cols[3].write("Blood Group")
     cols[4].write("Verified")
+    cols[5].write("Delete")
     for request in requestList:
         cnt = st.empty()
-        cols = cnt.columns((4, 2, 2, 2, 2))
+        cols = cnt.columns((3, 2, 2, 2, 2, 2))
         cols[0].write(request.id)
         cols[1].write(f"{request.get('qnty')} mL")
         cols[2].write(request.get("req"))
@@ -45,6 +46,10 @@ def requests():
                 "verified": True,
             }, merge=True)
             st.experimental_rerun()
+        if cols[5].button("Delete", key=request.id + "del"):
+            db.banks.document(request.id).delete()
+            cnt.empty()
+            st.success("Deleted")
     st.write("---")
 
 

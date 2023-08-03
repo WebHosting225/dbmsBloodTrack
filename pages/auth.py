@@ -97,7 +97,45 @@ session = db.sessions.document(cookies.get("sid"))
 
 if session.get().exists:
     user = session.get().get("user").get()
-    st.success(f"You are logged in as {user.get('username')}")
+
+    st.title("Profile")
+    st.write(f"Username: {user.get('username')}")
+    st.write(f"Full Name: {user.get('fullName')}")
+    st.write(f"Age: {user.get('age')}")
+    st.write(f"Blood Group: {user.get('bloodGrp')}")
+    st.write(f"Email: {user.get('email')}")
+    st.write(f"Phone Number: {user.get('phoneNo')}")
+
+    with st.expander("Edit Profile"):
+        fullName = st.text_input("Full Name", value=user.get("fullName"))
+        col1, col2 = st.columns(2)
+        age = col1.number_input("Age", min_value=16, max_value=60, value=user.get("age"))
+        bloodGrp = col2.selectbox("Blood Group", db.bloodTypes.keys(), index=list(db.bloodTypes.keys()).index(user.get("bloodGrp")))
+        col1, col2 = st.columns(2)
+        email = col1.text_input("Email", value=user.get("email"))
+        phoneNo = col2.text_input("Phone Number", value=user.get("phoneNo"))
+        if st.button("Update"):
+            db.users.document(user.id).update({
+                "fullName": fullName,
+                "age": age,
+                "email": email,
+                "phoneNo": phoneNo,
+                "bloodGrp": bloodGrp,
+            })
+            st.experimental_rerun()
+        with st.form("Delete Account"):
+            st.error("Danger Zone: Delete Account")
+            st.warning("This action is irreversible")
+            st.warning("Confirm Delete Account")
+            password = st.text_input("Password", type="password")
+            if st.form_submit_button("Confirm") and hasher(password) == user.get("password"):
+                db.users.document(user.id).delete()
+                db.sessions.document(cookies.get("sid")).delete()
+                cookies.delete("sid")
+                st.experimental_rerun()
+            else:
+                st.error("Incorrect Password")
+
     if st.button("Logout"):
         cookies.delete("sid")
         session.delete()

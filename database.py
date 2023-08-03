@@ -8,7 +8,7 @@ from firebase_admin import firestore
 @st.cache_resource
 def getDb():
     try:
-        cred = credentials.Certificate("dbmsbloodtra-firebase-adminsdk-l08e9-2fbb65dd07.json")  # noqa
+        cred = credentials.Certificate("dbmsbloodtra-firebase-adminsdk-l08e9-0c0d545f37.json")  # noqa
     except FileNotFoundError:
         firebaseCreds = st.secrets.firebase
         cred = credentials.Certificate({
